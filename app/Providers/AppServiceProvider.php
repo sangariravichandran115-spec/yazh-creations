@@ -33,23 +33,25 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view): void {
             try {
-                $settings = [
-                    'brandName' => Setting::get('brand_name', 'Yazh Creations'),
-                    'tagline' => Setting::get('tagline', 'Wear • Create • Inspire'),
-                    'heroTitle' => Setting::get('hero_title', 'Wear • Create • Inspire'),
-                    'heroDescription' => Setting::get('hero_description', 'Elegant women\'s fashion and handcrafted creations.'),
-                    'aboutText' => Setting::get('about_text', ''),
-                    'instagramUrl' => Setting::get('instagram_url', '#'),
-                    'whatsappNumber' => Setting::get('whatsapp_number', ''),
-                    'contactEmail' => Setting::get('email', ''),
-                    'contactPhone' => Setting::get('phone', ''),
-                    'contactAddress' => Setting::get('address', ''),
-                    'storyTitle' => Setting::get('story_title', 'Our Story'),
-                    'storyImage' => Setting::get('story_image', ''),
-                    'navCategories' => Category::active()->orderBy('name')->get(),
+                $settings = Setting::map();
+
+                $shared = [
+                    'brandName' => $settings['brand_name'] ?? 'Yazh Creations',
+                    'tagline' => $settings['tagline'] ?? 'Wear • Create • Inspire',
+                    'heroTitle' => $settings['hero_title'] ?? 'Wear • Create • Inspire',
+                    'heroDescription' => $settings['hero_description'] ?? 'Elegant women\'s fashion and handcrafted creations.',
+                    'aboutText' => $settings['about_text'] ?? '',
+                    'instagramUrl' => $settings['instagram_url'] ?? '#',
+                    'whatsappNumber' => $settings['whatsapp_number'] ?? '',
+                    'contactEmail' => $settings['email'] ?? '',
+                    'contactPhone' => $settings['phone'] ?? '',
+                    'contactAddress' => $settings['address'] ?? '',
+                    'storyTitle' => $settings['story_title'] ?? 'Our Story',
+                    'storyImage' => $settings['story_image'] ?? '',
+                    'navCategories' => Category::nav(),
                 ];
             } catch (\Throwable) {
-                $settings = [
+                $shared = [
                     'brandName' => 'Yazh Creations',
                     'tagline' => 'Wear • Create • Inspire',
                     'heroTitle' => 'Wear • Create • Inspire',
@@ -66,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
                 ];
             }
 
-            $view->with($settings);
+            $view->with($shared);
         });
 
         RateLimiter::for('login', function (Request $request) {
