@@ -5,6 +5,7 @@ services:
     plan: free
     region: oregon
     branch: main
+    healthCheckPath: /up
     envVars:
       - key: APP_NAME
         value: "Yazh Creations"

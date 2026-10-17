@@ -24,4 +24,4 @@ COPY --from=assets /app/public/build ./public/build
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-CMD ["sh", "-c", "php artisan config:cache && php artisan view:cache && php artisan storage:link --force && php artisan migrate --force && exec php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
+CMD ["sh", "-c", "php artisan config:cache && php artisan view:cache && php artisan storage:link --force && php artisan migrate --force && exec env PHP_CLI_SERVER_WORKERS=4 php artisan serve --host=0.0.0.0 --port=${PORT:-10000} --no-reload"]
