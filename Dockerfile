@@ -33,6 +33,6 @@ COPY docker/nginx.conf.template /etc/nginx/nginx.conf.template
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 8080
+EXPOSE 10000
 
 CMD ["/usr/local/bin/start.sh"]
