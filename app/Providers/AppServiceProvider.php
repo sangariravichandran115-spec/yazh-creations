@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Setting;
+use App\View\Components\WhatsAppButton;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(! $this->app->isProduction());
         Paginator::useBootstrapFive();
+
+        Blade::component(WhatsAppButton::class, 'whatsapp-button');
 
         View::composer('*', function ($view): void {
             try {

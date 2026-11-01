@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
+use App\View\Components\WhatsAppButton;
 use Database\Seeders\SettingSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class PublicPagesTest extends TestCase
@@ -110,12 +113,33 @@ class PublicPagesTest extends TestCase
         $category = Category::factory()->create();
         $products = Product::factory()->count(3)->create(['category_id' => $category->id]);
 
-        $this->get(route('sitemap'))
+        $response = $this->get(route('sitemap'));
+
+        $response
             ->assertOk()
             ->assertHeader('Content-Type', 'application/xml')
             ->assertSee('<urlset', false)
             ->assertSee(route('categories.show', $category), false)
             ->assertSee(route('products.show', $products->first()), false);
+
+        $this->assertStringStartsWith('<?xml', $response->getContent());
+    }
+
+    public function test_whatsapp_component_alias_is_registered(): void
+    {
+        $this->assertSame(
+            WhatsAppButton::class,
+            Blade::getClassComponentAliases()['whatsapp-button'] ?? null,
+        );
+    }
+
+    public function test_navigation_cache_stores_plain_arrays(): void
+    {
+        Category::factory()->create();
+
+        Category::nav();
+
+        $this->assertIsArray(Cache::get(Category::NAV_CACHE_KEY));
     }
 
     public function test_missing_page_returns_404(): void

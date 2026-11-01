@@ -15,6 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-install pdo_pgsql mbstring \
     && rm -rf /var/lib/apt/lists/*
 
+RUN printf '%s\n' \
+    'short_open_tag=Off' \
+    'expose_php=Off' \
+    'display_errors=Off' \
+    'log_errors=On' \
+    > /usr/local/etc/php/conf.d/zz-app.ini
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html

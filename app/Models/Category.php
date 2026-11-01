@@ -21,7 +21,7 @@ class Category extends Model
 
     public const STATUS_INACTIVE = 'inactive';
 
-    public const NAV_CACHE_KEY = 'nav_categories';
+    public const NAV_CACHE_KEY = 'nav_categories.v2';
 
     /**
      * Get the products that belong to this category.
@@ -63,11 +63,19 @@ class Category extends Model
             return app(self::NAV_CACHE_KEY);
         }
 
-        $categories = Cache::remember(
+        /** @var array<int, array{id: int, name: string, slug: string, image: string|null}> $rows */
+        $rows = Cache::remember(
             self::NAV_CACHE_KEY,
             now()->addHour(),
-            fn (): Collection => static::query()->active()->orderBy('name')->get(),
+            fn (): array => static::query()
+                ->active()
+                ->orderBy('name')
+                ->get(['id', 'name', 'slug', 'image'])
+                ->map(fn (self $category): array => $category->only(['id', 'name', 'slug', 'image']))
+                ->all(),
         );
+
+        $categories = static::hydrate($rows);
 
         app()->instance(self::NAV_CACHE_KEY, $categories);
 

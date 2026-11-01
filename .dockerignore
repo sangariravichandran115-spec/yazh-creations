@@ -6,6 +6,12 @@ node_modules
 vendor
 public/build
 public/hot
+public/storage
+bootstrap/cache/*.php
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*.php
+storage/logs/*.log
 .phpunit.result.cache
 tests
 .agents
