@@ -45,10 +45,13 @@
                 <div class="admin-panel rounded-4 p-3">
                     <h2 class="admin-panel-title mb-3">Image</h2>
                     <label for="image" class="form-label d-block">Category Image <small class="text-muted">(JPG, PNG or WebP, max 5MB)</small></label>
-                    <input type="file" name="image" id="image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp">
+                    <input type="file" name="image" id="image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp"
+                        data-image-preview
+                        data-image-preview-target="#category-image-preview">
                     @error('image')
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
+                    <div id="category-image-preview" class="admin-image-preview-grid mt-3"></div>
                 </div>
             </div>
         </div>

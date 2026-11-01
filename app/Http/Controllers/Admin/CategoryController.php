@@ -44,7 +44,7 @@ class CategoryController extends Controller
         $data['slug'] = Str::slug($request->string('name')->value());
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = $this->images->storeUploadedImage($request->file('image'), 'categories', 'categories');
         }
 
         Category::create($data);
@@ -70,7 +70,7 @@ class CategoryController extends Controller
                 $this->images->deleteCategoryImage($category);
             }
 
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = $this->images->storeUploadedImage($request->file('image'), 'categories', 'categories');
         }
 
         $category->update($data);

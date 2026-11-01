@@ -1,6 +1,13 @@
 <div {{ $attributes->merge(['class' => 'product-card rounded-4 overflow-hidden']) }}>
     <a href="{{ route('products.show', $product) }}" class="product-card-image-link d-block position-relative">
-        <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="product-card-image" loading="lazy">
+        <img src="{{ $product->imageUrl(600) }}"
+             srcset="{{ $product->imageUrl(400) }} 400w, {{ $product->imageUrl(600) }} 600w, {{ $product->imageUrl(800) }} 800w"
+             sizes="(min-width: 992px) 25vw, (min-width: 768px) 33vw, 50vw"
+             alt="{{ $product->name }} - {{ $product->category->name }}"
+             class="product-card-image"
+             loading="lazy"
+             decoding="async"
+             data-fallback="{{ asset('images/placeholder-product.jpg') }}">
 
         @if ($product->stock_status === \App\Models\Product::STOCK_OUT_OF_STOCK)
             <span class="product-badge badge-stock badge-out">Out of Stock</span>

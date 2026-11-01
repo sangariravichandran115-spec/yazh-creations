@@ -59,7 +59,7 @@
                         @foreach ($products as $product)
                             <tr>
                                 <td class="admin-table-thumb">
-                                    <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" loading="lazy">
+                                    <img src="{{ $product->imageUrl(120) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-product.jpg') }}">
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.products.show', $product) }}" class="fw-semibold text-decoration-none">{{ $product->name }}</a>

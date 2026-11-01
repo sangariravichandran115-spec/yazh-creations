@@ -6,17 +6,21 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Throwable;
 
 class ImageService
 {
+    public function __construct(protected CloudinaryService $cloudinary) {}
+
     /**
      * Store uploaded product images and attach them to a product.
      *
      * @param  array<int, UploadedFile>  $files
      */
-    public function attachUploadedImages(Product $product, array $files): void
+    public function attachUploadedImages(Product $product, array $files, ?int $primaryIndex = null): void
     {
         if (empty($files)) {
             return;
@@ -24,35 +28,65 @@ class ImageService
 
         $nextPosition = $product->images()->max('position') ?? 0;
         $hasPrimary = $product->images()->where('is_primary', true)->exists();
+        $created = [];
 
         foreach ($files as $file) {
-            $path = $file->store('products', 'public');
-
-            $image = $product->images()->create([
-                'path' => $path,
-                'is_primary' => $hasPrimary ? false : true,
+            $created[] = $product->images()->create([
+                'path' => $this->storeUploadedImage($file, 'products', 'products'),
+                'is_primary' => false,
                 'position' => ++$nextPosition,
             ]);
-
-            $hasPrimary = $hasPrimary ?: $image->is_primary;
         }
+
+        if ($created === []) {
+            return;
+        }
+
+        if ($primaryIndex !== null && isset($created[$primaryIndex])) {
+            $product->images()->update(['is_primary' => false]);
+            $created[$primaryIndex]->update(['is_primary' => true]);
+        } elseif (! $hasPrimary) {
+            $created[0]->update(['is_primary' => true]);
+        }
+    }
+
+    public function storeUploadedImage(UploadedFile $file, string $localFolder, string $cloudinaryFolder): string
+    {
+        if ($this->cloudinary->enabled()) {
+            try {
+                $upload = $this->cloudinary->upload($file, $cloudinaryFolder);
+
+                if ($upload !== null) {
+                    return $upload['secure_url'];
+                }
+            } catch (Throwable $exception) {
+                Log::warning('Cloudinary upload threw an exception.', [
+                    'message' => $exception->getMessage(),
+                ]);
+            }
+        }
+
+        return $file->store($localFolder, 'public');
     }
 
     public function setPrimary(ProductImage $image): void
     {
-        $image->product->images()->update(['is_primary' => false]);
+        $product = $image->product()->firstOrFail();
+
+        $product->images()->update(['is_primary' => false]);
         $image->update(['is_primary' => true]);
     }
 
     public function delete(ProductImage $image): void
     {
         $wasPrimary = $image->is_primary;
+        $product = $image->product()->firstOrFail();
 
-        $this->deleteStoredFile($image->path);
+        $this->deleteStoredImage($image->path);
         $image->delete();
 
         if ($wasPrimary) {
-            $fallback = $image->product->images()->orderBy('position')->first();
+            $fallback = $product->images()->orderBy('position')->first();
 
             if ($fallback) {
                 $this->setPrimary($fallback);
@@ -62,7 +96,7 @@ class ImageService
 
     public function deleteAll(Product $product): void
     {
-        $product->images->each(fn (ProductImage $image) => $this->deleteStoredFile($image->path));
+        $product->images->each(fn (ProductImage $image) => $this->deleteStoredImage($image->path));
         $product->images()->delete();
     }
 
@@ -73,16 +107,35 @@ class ImageService
 
     public function deleteCategoryImage(Category $category): void
     {
-        if ($category->image) {
-            $this->deleteStoredFile($category->image);
-        }
+        $this->deleteStoredImage($category->image);
     }
 
     public function deleteStoredImage(?string $path): void
     {
-        if ($path) {
-            $this->deleteStoredFile($path);
+        if ($path === null || trim($path) === '') {
+            return;
         }
+
+        if (CloudinaryUrl::isCloudinary($path)) {
+            $publicId = CloudinaryUrl::publicId($path);
+
+            if ($publicId === null) {
+                return;
+            }
+
+            try {
+                $this->cloudinary->destroy($publicId);
+            } catch (Throwable $exception) {
+                Log::warning('Cloudinary destroy threw an exception.', [
+                    'message' => $exception->getMessage(),
+                    'public_id' => $publicId,
+                ]);
+            }
+
+            return;
+        }
+
+        $this->deleteStoredFile($path);
     }
 
     /**

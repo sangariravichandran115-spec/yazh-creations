@@ -150,13 +150,21 @@
 
             <div class="mb-2">
                 <label for="images" class="form-label d-block">Upload Images <small class="text-muted">(JPG, PNG or WebP, max 5MB each)</small></label>
-                <input type="file" name="images[]" id="images" class="form-control yc-input" accept="image/jpeg,image/png,image/webp" multiple>
+                <input type="file" name="images[]" id="images" class="form-control yc-input" accept="image/jpeg,image/png,image/webp" multiple
+                    data-image-preview
+                    data-image-preview-target="#product-image-previews"
+                    data-max-files="8"
+                    data-primary-name="primary_image_index">
                 @error('images')
                     <div class="text-danger small mt-1">{{ $message }}</div>
                 @enderror
                 @error('images.*')
                     <div class="text-danger small mt-1">{{ $message }}</div>
                 @enderror
+                @error('primary_image_index')
+                    <div class="text-danger small mt-1">{{ $message }}</div>
+                @enderror
+                <div id="product-image-previews" class="admin-image-preview-grid mt-3"></div>
             </div>
 
             @if ($product && $product->images->isNotEmpty())
@@ -164,7 +172,7 @@
                     @foreach ($product->images as $image)
                         <div class="col-6">
                             <div class="admin-image-box rounded-3 position-relative {{ $image->is_primary ? 'active' : '' }}">
-                                <img src="{{ $image->url() }}" alt="{{ $product->name }}" class="rounded-3 w-100">
+                                <img src="{{ $image->url(300) }}" alt="{{ $product->name }}" class="rounded-3 w-100" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-product.jpg') }}">
                                 @if ($image->is_primary)
                                     <span class="admin-image-badge badge bg-gold text-white">Primary</span>
                                 @else

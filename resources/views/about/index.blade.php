@@ -16,7 +16,7 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-xl-8">
                     @if ($storyImage)
-                        <img src="{{ asset('storage/'.$storyImage) }}" alt="{{ $brandName }} story image" class="rounded-4 shadow mb-4 mx-auto d-block w-100" style="max-width: 400px;">
+                        <img src="{{ $storyImage }}" alt="{{ $brandName }} story image" class="rounded-4 shadow mb-4 mx-auto d-block w-100" style="max-width: 400px;" loading="lazy" decoding="async" data-fallback="{{ asset('images/branding/logo.png') }}">
                     @else
                         <img src="{{ asset('images/branding/logo.png') }}" alt="{{ $brandName }} logo" class="rounded-4 shadow mb-4 mx-auto d-block" width="120" height="120">
                     @endif

@@ -47,14 +47,17 @@
                     <h2 class="admin-panel-title mb-3">Image</h2>
 
                     @if ($category->image)
-                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="rounded-3 mb-3 w-100">
+                        <img src="{{ $category->imageUrl(400) }}" alt="{{ $category->name }}" class="rounded-3 mb-3 w-100" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-category.jpg') }}">
                     @endif
 
                     <label for="image" class="form-label d-block">Replace Image <small class="text-muted">(JPG, PNG or WebP, max 5MB)</small></label>
-                    <input type="file" name="image" id="image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp">
+                    <input type="file" name="image" id="image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp"
+                        data-image-preview
+                        data-image-preview-target="#category-image-preview">
                     @error('image')
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
+                    <div id="category-image-preview" class="admin-image-preview-grid mt-3"></div>
                 </div>
             </div>
         </div>

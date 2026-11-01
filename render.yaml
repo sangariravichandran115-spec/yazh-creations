@@ -21,6 +21,20 @@ services:
         value: pgsql
       - key: DB_URL
         sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: DB_EMULATE_PREPARES
+        value: "true"
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: yazh-creations
+      - key: CLOUDINARY_ENABLED
+        value: "true"
       - key: SESSION_DRIVER
         value: database
       - key: CACHE_STORE

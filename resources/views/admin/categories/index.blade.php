@@ -39,11 +39,7 @@
                         @foreach ($categories as $category)
                             <tr>
                                 <td class="admin-table-thumb">
-                                    @if ($category->image)
-                                        <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
-                                    @else
-                                        <img src="{{ asset('images/placeholder-category.jpg') }}" alt="{{ $category->name }}">
-                                    @endif
+                                    <img src="{{ $category->imageUrl(96) }}" alt="{{ $category->name }}" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-category.jpg') }}">
                                 </td>
                                 <td>
                                     <a href="{{ route('categories.show', $category) }}" target="_blank" class="fw-semibold text-decoration-none">{{ $category->name }}</a>

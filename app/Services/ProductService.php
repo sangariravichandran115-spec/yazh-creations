@@ -98,12 +98,17 @@ class ProductService
      */
     public function store(array $data): Product
     {
+        $images = $data['images'] ?? [];
+        $primaryIndex = isset($data['primary_image_index']) ? (int) $data['primary_image_index'] : null;
+
+        unset($data['images'], $data['primary_image_index']);
+
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['featured'] = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $product = Product::create($data);
 
-        $this->images->attachUploadedImages($product, $data['images'] ?? []);
+        $this->images->attachUploadedImages($product, $images, $primaryIndex);
 
         return $product;
     }
@@ -113,11 +118,16 @@ class ProductService
      */
     public function update(Product $product, array $data): Product
     {
+        $images = $data['images'] ?? [];
+        $primaryIndex = isset($data['primary_image_index']) ? (int) $data['primary_image_index'] : null;
+
+        unset($data['images'], $data['primary_image_index']);
+
         $data['featured'] = filter_var($data['featured'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $product->update($data);
 
-        $this->images->attachUploadedImages($product, $data['images'] ?? []);
+        $this->images->attachUploadedImages($product, $images, $primaryIndex);
 
         return $product;
     }

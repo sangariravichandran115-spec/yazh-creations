@@ -34,6 +34,7 @@ class SettingsController extends Controller
         }
 
         $settings['story_image'] = Setting::get('story_image');
+        $settings['story_image_url'] = Setting::storyImageUrl(300);
 
         return view('admin.settings.index', [
             'settings' => $settings,
@@ -58,13 +59,15 @@ class SettingsController extends Controller
             'remove_story_image' => ['sometimes', 'boolean'],
         ]);
 
+        unset($fields['remove_story_image']);
+
         if ($request->boolean('remove_story_image')) {
             $images->deleteStoredImage(Setting::get('story_image'));
             unset($fields['story_image']);
             Setting::set('story_image', null);
         } elseif ($request->hasFile('story_image')) {
             $images->deleteStoredImage(Setting::get('story_image'));
-            $fields['story_image'] = $request->file('story_image')->store('settings', 'public');
+            $fields['story_image'] = $images->storeUploadedImage($request->file('story_image'), 'settings', 'settings');
         }
 
         foreach ($fields as $key => $value) {

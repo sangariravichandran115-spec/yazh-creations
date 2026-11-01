@@ -4,7 +4,7 @@
 @section('meta_description', Str::limit($product->description, 160))
 @section('og_title', $product->name . ' — ' . $brandName)
 @section('og_description', Str::limit($product->description, 160))
-@section('og_image', $product->imageUrl())
+@section('og_image', $product->imageUrl(1200))
 
 @section('content')
     <section class="yc-section">
@@ -21,19 +21,35 @@
             <div class="row g-5">
                 <div class="col-lg-6">
                     <div class="product-gallery">
-                        @if ($product->images->isNotEmpty())
-                            <img src="{{ $product->primaryImage()->url() }}" alt="{{ $product->name }} — main image" id="gallery-main" class="product-gallery-main rounded-4 w-100">
+                        @php
+                            $primaryImage = $product->primaryImage();
+                        @endphp
+                        @if ($primaryImage)
+                            <img src="{{ $primaryImage->url(1000) }}"
+                                 srcset="{{ $primaryImage->url(800) }} 800w, {{ $primaryImage->url(1000) }} 1000w, {{ $primaryImage->url(1400) }} 1400w"
+                                 sizes="(min-width: 992px) 50vw, 100vw"
+                                 alt="{{ $product->name }} - main image"
+                                 id="gallery-main"
+                                 class="product-gallery-main rounded-4 w-100"
+                                 loading="eager"
+                                 fetchpriority="high"
+                                 decoding="async"
+                                 data-fallback="{{ asset('images/placeholder-product.jpg') }}">
                             @if ($product->images->count() > 1)
                                 <div class="product-gallery-thumbs d-flex gap-2 mt-3">
                                     @foreach ($product->images->sortBy('position') as $image)
-                                        <button type="button" class="product-gallery-thumb rounded-3 p-0 border-0 {{ $image->is_primary ? 'active' : '' }}" data-gallery-src="{{ $image->url() }}" data-gallery-alt="{{ $product->name }}" aria-label="View product image">
-                                            <img src="{{ $image->url() }}" alt="{{ $product->name }}" class="rounded-3">
+                                        <button type="button" class="product-gallery-thumb rounded-3 p-0 border-0 {{ $image->is_primary ? 'active' : '' }}" data-gallery-src="{{ $image->url(1400) }}" data-gallery-alt="{{ $product->name }} - image {{ $loop->iteration }}" aria-label="View {{ $product->name }} image {{ $loop->iteration }}">
+                                            <img src="{{ $image->url(160) }}" alt="{{ $product->name }} - image {{ $loop->iteration }}" class="rounded-3" width="84" height="84" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-product.jpg') }}">
                                         </button>
                                     @endforeach
                                 </div>
                             @endif
                         @else
-                            <img src="{{ asset('images/placeholder-product.jpg') }}" alt="{{ $product->name }}" class="product-gallery-main rounded-4 w-100">
+                            <img src="{{ asset('images/placeholder-product.jpg') }}"
+                                 alt="{{ $product->name }}"
+                                 class="product-gallery-main rounded-4 w-100"
+                                 loading="eager"
+                                 decoding="async">
                         @endif
                     </div>
                 </div>

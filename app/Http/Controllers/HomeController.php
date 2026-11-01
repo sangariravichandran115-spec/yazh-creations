@@ -37,7 +37,7 @@ class HomeController extends Controller
             'heroDescription' => Setting::get('hero_description', 'Elegant women\'s fashion and handcrafted creations.'),
             'aboutText' => Setting::get('about_text', ''),
             'storyTitle' => Setting::get('story_title', 'Our Story'),
-            'storyImage' => Setting::get('story_image', ''),
+            'storyImage' => Setting::storyImageUrl() ?? '',
             'instagramUrl' => Setting::get('instagram_url', '#'),
         ]);
     }
@@ -49,7 +49,7 @@ class HomeController extends Controller
             'tagline' => Setting::get('tagline', 'Wear • Create • Inspire'),
             'aboutText' => Setting::get('about_text', ''),
             'storyTitle' => Setting::get('story_title', 'Our Story'),
-            'storyImage' => Setting::get('story_image', ''),
+            'storyImage' => Setting::storyImageUrl() ?? '',
         ]);
     }
 }

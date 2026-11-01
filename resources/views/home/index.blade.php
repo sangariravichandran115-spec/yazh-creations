@@ -3,7 +3,8 @@
 @section('title', $brandName . ' — ' . $tagline)
 
 @php
-    $heroImage = $newArrivals->first()?->imageUrl() ?: asset('images/branding/logo.png');
+    $heroProduct = $newArrivals->first();
+    $heroImage = $heroProduct?->imageUrl(1200) ?: asset('images/branding/logo.png');
 @endphp
 
 @section('content')
@@ -18,7 +19,14 @@
                     <a href="{{ route('products.index') }}" class="btn btn-yc btn-lg">Explore Collection</a>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <img src="{{ $heroImage }}" alt="Featured {{ $brandName }} product" class="yc-hero-image rounded-4 shadow">
+                    <img src="{{ $heroImage }}"
+                         @if ($heroProduct) srcset="{{ $heroProduct->imageUrl(800) }} 800w, {{ $heroProduct->imageUrl(1200) }} 1200w, {{ $heroProduct->imageUrl(1600) }} 1600w" sizes="(min-width: 992px) 50vw, 100vw" @endif
+                         alt="Featured {{ $heroProduct?->name ?? $brandName }} product"
+                         class="yc-hero-image rounded-4 shadow"
+                         loading="eager"
+                         fetchpriority="high"
+                         decoding="async"
+                         data-fallback="{{ asset('images/branding/logo.png') }}">
                 </div>
             </div>
         </div>
@@ -129,7 +137,12 @@
         <div class="container">
             <div class="row align-items-center g-5">
                 <div class="col-lg-6">
-                    <img src="{{ $storyImage ? asset('storage/'.$storyImage) : asset('images/branding/logo.png') }}" alt="About {{ $brandName }}" class="rounded-4 shadow w-100">
+                    <img src="{{ $storyImage ?: asset('images/branding/logo.png') }}"
+                         alt="About {{ $brandName }}"
+                         class="rounded-4 shadow w-100"
+                         loading="lazy"
+                         decoding="async"
+                         data-fallback="{{ asset('images/branding/logo.png') }}">
                 </div>
                 <div class="col-lg-6">
                     <h2 class="yc-section-title">{{ $storyTitle }}</h2>

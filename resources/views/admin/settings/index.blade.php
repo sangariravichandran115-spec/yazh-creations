@@ -50,20 +50,23 @@
 
                     <div class="mb-3">
                         <label for="story_image" class="form-label">Story Image</label>
-                        @if ($settings['story_image'])
+                        @if ($settings['story_image_url'])
                             <div class="mb-2">
-                                <img src="{{ asset('storage/'.$settings['story_image']) }}" alt="Current story image" class="rounded-3 shadow-sm" style="max-height: 140px;">
+                                <img src="{{ $settings['story_image_url'] }}" alt="Current story image" class="rounded-3 shadow-sm" style="max-height: 140px;" loading="lazy" decoding="async" data-fallback="{{ asset('images/branding/logo.png') }}">
                             </div>
                             <div class="form-check mb-2">
                                 <input type="checkbox" name="remove_story_image" id="remove_story_image" value="1" class="form-check-input" @checked(old('remove_story_image'))>
                                 <label for="remove_story_image" class="form-check-label text-danger">Remove current image</label>
                             </div>
                         @endif
-                        <input type="file" name="story_image" id="story_image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp">
+                        <input type="file" name="story_image" id="story_image" class="form-control yc-input" accept="image/jpeg,image/png,image/webp"
+                            data-image-preview
+                            data-image-preview-target="#story-image-preview">
                         <div class="form-text">JPG, PNG or WebP up to 2MB.</div>
                         @error('story_image')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
+                        <div id="story-image-preview" class="admin-image-preview-grid mt-3"></div>
                     </div>
                 </div>
             </div>

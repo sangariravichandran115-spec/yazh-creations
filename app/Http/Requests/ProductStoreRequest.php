@@ -38,6 +38,7 @@ class ProductStoreRequest extends FormRequest
             'status' => ['required', Rule::in([Product::STATUS_ACTIVE, Product::STATUS_INACTIVE])],
             'images' => ['nullable', 'array', 'max:8'],
             'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'primary_image_index' => ['nullable', 'integer', 'min:0', 'max:7'],
         ];
     }
 }

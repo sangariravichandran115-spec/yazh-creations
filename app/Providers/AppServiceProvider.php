@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
                     'contactPhone' => $settings['phone'] ?? '',
                     'contactAddress' => $settings['address'] ?? '',
                     'storyTitle' => $settings['story_title'] ?? 'Our Story',
-                    'storyImage' => $settings['story_image'] ?? '',
+                    'storyImage' => Setting::storyImageUrl() ?? '',
                     'navCategories' => Category::nav(),
                 ];
             } catch (\Throwable) {

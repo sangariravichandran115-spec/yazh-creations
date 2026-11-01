@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CloudinaryUrl;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,6 +43,13 @@ class Category extends Model
     public function hasProducts(): bool
     {
         return $this->products()->exists();
+    }
+
+    public function imageUrl(?int $width = null, ?int $height = null): string
+    {
+        $url = CloudinaryUrl::resolve($this->image, $width, $height);
+
+        return $url !== '' ? $url : asset('images/placeholder-category.jpg');
     }
 
     /**

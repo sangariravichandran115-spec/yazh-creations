@@ -52,6 +52,7 @@ class ProductController extends Controller
             'stock_status',
             'featured',
             'status',
+            'primary_image_index',
         ]) + ['images' => $request->file('images', [])]);
 
         return redirect()
@@ -88,6 +89,7 @@ class ProductController extends Controller
             'stock_status',
             'featured',
             'status',
+            'primary_image_index',
         ]) + ['images' => $request->file('images', [])]);
 
         return redirect()

@@ -25,7 +25,7 @@
                         @foreach ($product->images as $image)
                             <div class="col-6 col-md-4 col-lg-3">
                                 <div class="admin-image-box rounded-3 {{ $image->is_primary ? 'active' : '' }}">
-                                    <img src="{{ $image->url() }}" alt="{{ $product->name }}" class="rounded-3 w-100">
+                                    <img src="{{ $image->url(300) }}" alt="{{ $product->name }}" class="rounded-3 w-100" loading="lazy" decoding="async" data-fallback="{{ asset('images/placeholder-product.jpg') }}">
                                     @if ($image->is_primary)
                                         <span class="admin-image-badge badge bg-gold text-white">Primary</span>
                                     @endif

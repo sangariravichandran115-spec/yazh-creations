@@ -127,10 +127,10 @@ class Product extends Model
     /**
      * Get the URL of the primary image, or a placeholder when none exists.
      */
-    public function imageUrl(): string
+    public function imageUrl(?int $width = null, ?int $height = null): string
     {
         $image = $this->primaryImage();
 
-        return $image ? $image->url() : asset('images/placeholder-product.jpg');
+        return $image ? $image->url($width, $height) : asset('images/placeholder-product.jpg');
     }
 }

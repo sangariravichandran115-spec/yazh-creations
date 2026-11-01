@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CloudinaryUrl;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,8 +39,10 @@ class ProductImage extends Model
         ];
     }
 
-    public function url(): string
+    public function url(?int $width = null, ?int $height = null): string
     {
-        return asset('storage/'.$this->path);
+        $url = CloudinaryUrl::resolve($this->path, $width, $height);
+
+        return $url !== '' ? $url : asset('images/placeholder-product.jpg');
     }
 }
