@@ -125,6 +125,14 @@ class PublicPagesTest extends TestCase
         $this->assertStringStartsWith('<?xml', $response->getContent());
     }
 
+    public function test_sitemap_uses_https_when_forwarded_as_secure(): void
+    {
+        $response = $this->withHeader('X-Forwarded-Proto', 'https')->get(route('sitemap'));
+
+        $response->assertOk();
+        $this->assertStringContainsString('https://localhost', $response->getContent());
+    }
+
     public function test_whatsapp_component_alias_is_registered(): void
     {
         $this->assertSame(
